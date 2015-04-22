@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 #############################################################
-# Script to Spider IP's for open ports                      #
+# Script to Spider IP's for open ports, thr. TOR  #
 # written by redN00ws @ Cleveridge                          #
 #############################################################
 #                                                           #
@@ -14,9 +14,10 @@
 #############################################################
 #                                                           #
 version = "V0.03"
-build = "046"
+build = "045"
 #############################################################
 
+import cPickle as cp
 import pxssh
 import getpass
 import glob
@@ -114,12 +115,8 @@ sPortsTCP = {
 }
 #++ BASIC SETTINGS //#
 threads = 5
-finallog = "\n"
 logresults = {}
 cachefile  = str(randint(1000000000, 9999999999)) + '.data'
-
-
-
 
 #++ FUNCTIONS //#
 
@@ -127,10 +124,15 @@ cachefile  = str(randint(1000000000, 9999999999)) + '.data'
 def func_writelog(how, logloc, txt): # how: a=append, w=new write
    with open(logloc, how) as mylog:
       mylog.write(txt)
-
-def func_addToFinalLog(txt):
-    global finallog
-    finallog = finallog + "\n" + txt
+      
+# func cache
+def func_cache(dat) :
+    try:
+        cf = file('cache/' + cachefile, 'w')
+        cp.dump(dat, cf)
+        cf.close()
+    except:
+        print '== cache write error =='
 
 
 # func ScanHost
@@ -200,6 +202,7 @@ def func_scanhost(ip, logloc):
    
    # print results
    func_writelog("a", logloc, logresults[logkey] + "\n")
+   func_cache(logresults)
 
 # func CheckIPrange
 def func_checkIPrange(ip_range):
@@ -341,7 +344,7 @@ def func_titleFilter(page):
 
 # func Exit
 def func_exit():
-   print "Exiting...\n\nThanks for using\nCleveridge IP Spider\n\nCleveridge : https://cleveridge.org /nIP Spider : https://github.com/Cleveridge/cleveridge-ip-spider"
+   print "Exiting...\n\nThanks for using\nCleveridge SSH Scanner\n\nCleveridge : https://cleveridge.org/nSSH Scanner : https://github.com/Cleveridge/cleveridge-ssh-scanner"
 
 
 
@@ -395,9 +398,7 @@ print "Creating log : log/%s" % (logfile),
 logloc = logdir + "/" + logfile
 with open(logloc, "w") as mylog:
    os.chmod(logloc, 0660)
-   txt = "Log created by Cleveridge IP Spider - " + version + " build " + build + "\n\n"
-   mylog.write(txt)
-   func_addToFinalLog(txt)
+   mylog.write("Log created by Cleveridge IP Spider - " + version + " build " + build + "\n\n")
    print ".... Done"
 """ """
 
@@ -435,6 +436,14 @@ if not os.path.exists(datadir) :
    func_writelog("a", logloc, txt + "\n")
    print txt
 
+# if default cache directory not exist -> create
+cachedir = 'cache'
+if not os.path.exists(cachedir) :
+   os.makedirs(cachedir)
+   txt = "Directory 'cache/' created"
+   func_writelog("a", logloc, txt + "\n")
+   print txt
+
 """
 :END
 ON FIRST RUN : SETTING UP BASIC FILES AND FOLDERS
@@ -452,7 +461,6 @@ print " " # to create a better view of the logs on screen
 #-- Register date and time of scan --#
 txt = "Tool started : %s/%s/%s - %s:%s:%s" % (now.year, format(now.month, '02d'), format(now.day, '02d'), format(now.hour, '02d'), format(now.minute, '02d'), format(now.second, '02d'))
 func_writelog("a", logloc, txt + "\n\n")
-func_addToFinalLog(txt)
 print txt
 print " "
 
@@ -469,7 +477,6 @@ with open(file_userip, 'w') as myuserip : # save new value
 #-- Local IP --#
 txt = "Local IP : " + [(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
 func_writelog("a", logloc, txt + "\n")
-func_addToFinalLog(txt)
 print txt
 
 #-- Visible IP --#
@@ -479,26 +486,23 @@ except Exception :
    visible_ip = urllib2.urlopen('https://enabledns.com/ip').read()
 txt = "Visible IP : " + visible_ip
 func_writelog("a", logloc, txt + "\n")
-func_addToFinalLog(txt)
 print txt
 
 #-- if private IP is visible
 if visible_ip == my_ip: # if your real ip is visible -> Break up 
-   txt = "***********************************************************\n* WARNING !!!                                             *\n*    Are you sure ?                                       *\n*    Your real IP is visible !!!                          *\n*                                                         *\n*    Use a VPN                                            *\n*    or                                                   *\n*    Add 'Socks4 127.0.0.1 9050' to /etc/proxychains.conf *\n*    Start Tor service, then                              *\n*    proxychains ./cl_ssh_scan.py                         *\n***********************************************************"
+   txt = "***********************************************************\n* WARNING !!!                                             *\n*    Are you sure ?                                       *\n*    Your real IP is visible !!!                          *\n*                                                         *\n*    Maybe you better use a VPN                           *\n*    or work over tor (+proxychains)                      *\n***********************************************************"
    func_writelog("a", logloc, txt + "\n")
-   func_addToFinalLog(txt)
    print txt
    
 if False == True:
     pass
-else: # CHANGED .... previously : If hidden IP
+else: # If hidden IP
    
    # Select Method
-   print "\n\n *************************************\n * Select a method :                 *\n *************************************\n * h : Scan one host ip              *\n * r : Scan a range of IP's          *" + "\n *************************************"  #\n * f : Scan IP's from file (one/row) *\n *************************************"
+   print "\n\n *************************************\n * Select a method :                 *\n *************************************\n * h : Scan one host ip              *\n * r : Scan a range of IP's          *\n *************************************" #*\n * f : Scan IP's from file (one/row) *\n *************************************"
    method = raw_input(' * Method : ')
    txt = "Selected Method : "
    func_writelog("a", logloc, txt)
-   func_addToFinalLog(txt)
    print txt,
    
    
@@ -517,7 +521,6 @@ else: # CHANGED .... previously : If hidden IP
        
       txt = "Scan IP range"
       func_writelog("a", logloc, txt + "\n\n")
-      func_addToFinalLog(txt)
       print txt
       
       print "Fill out an IP range like 192.168.0.1-25"
@@ -533,7 +536,6 @@ else: # CHANGED .... previously : If hidden IP
          # log
          txt = "IP range %s is valid" % (ip_range)
          func_writelog("a", logloc, txt + "\n\n")
-         func_addToFinalLog(txt)
          print txt
       	
          # creating ip thread list
@@ -554,17 +556,14 @@ else: # CHANGED .... previously : If hidden IP
          for t in thrds:
              t.join()
          time.sleep(5)
-         
+         with open('cache/' + cachefile, 'rb') as cche:
+             cacheresult = cp.load(cche)
          print ' '
          print 'Results:'
          print '********'
          for key, val in enumerate(logresults):   #cacheresult) :
-             txt = logresults[key]   #cacheresult[value]
-             print txt
-             func_addToFinalLog(txt)
+             print logresults[key]   #cacheresult[value]
          
-         # Create Final Log
-         func_writelog("w", logloc, finallog + "\n\n")
          
          # End of Scan
          time_stamp_end = int(time.time())
@@ -572,8 +571,6 @@ else: # CHANGED .... previously : If hidden IP
          txt = 'Scan Ended \nDuration ' + time.strftime('%H hours %M min %S sec', time.gmtime(duration)) + '\n\nLog at ' + logloc
          func_writelog("a", logloc, txt + "\n\n")
          print txt
-         
-         func_exit()
          
              
              
