@@ -10,6 +10,8 @@ Cleveridge IP Spider
 ##What is the Cleveridge IP Spider
 The Cleveridge IP Spider searches for open TCP ports of a single IP-address or a IP-range and returns the open ports with an indication of the service behind the open ports.    
 
+When scanning a range of IP's it will run multiple threads at the same time to save time. In one scan procedure you will be able to scan a range of 256 IP's (xxx.xxx.xxx.0-255)
+
 ##Tested
 At this moment the Cleveridge IP Spider is only tested in a Linux Kali environment with Python 2.7 installed.     
 The Cleveridge IP Spider is also successfully tested in combination with Proxychains 3.1 (http://proxychains.sourceforge.net/) and Tor (https://www.torproject.org/) to hide the ip of the user.
