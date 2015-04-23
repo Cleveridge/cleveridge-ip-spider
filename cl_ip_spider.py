@@ -14,10 +14,9 @@
 #############################################################
 #                                                           #
 version = "V0.03"
-build = "050"
+build = "053"
 #############################################################
 
-import pxssh
 import getpass
 import glob
 import math
@@ -26,7 +25,10 @@ import socket
 import sys
 import threading
 import time
-import urllib2
+try:
+    import urllib.request as urllib2
+except ImportError:
+    import urllib2
 from datetime import datetime
 from random import randint
 
@@ -160,21 +162,21 @@ def func_scanhost(ip, logloc):
            if result == 0: # if port is open
               txt = "   |=> Port %s (%s) is accessible." % (item, sPortsTCP[item])
               logresults[logkey] = logresults[logkey] + txt + '\n'
-              print txt
+              print(txt)
               html = True
                                                          
               reply = sock.recv(4096)
               txt = "   |   %s" % (reply.encode('iso-8859-1')) 
               logresults[logkey] = logresults[logkey] + txt + '\n'
-              print txt              
+              print(txt)              
               
            else: # if port is closed
               txt = "|- Port %s closed." % (item)
-              print txt
+              print(txt)
        except socket.timeout:
-          print "Timed out"
+          print("Timed out")
        except :
-          print "Closed"
+          print("Closed")
        
        # Try to find html page titles on possible HTML ports
        if (item == 80 or item == 443 or item == 8008 or item == 8080) and html == True :
@@ -182,18 +184,18 @@ def func_scanhost(ip, logloc):
                thisurl = 'https://' + str(ip) + ':' + str(item)
            else:
                thisurl = 'http://' + str(ip) + ':' + str(item)
-           print 'url : ' + thisurl
+           print('url : ' + thisurl)
            
            try:
                page = urllib2.urlopen(thisurl, timeout=5).read()
                title = func_titleFilter(page)
                txt = "   |   %s" % (title.encode('iso-8859-1')) 
                logresults[logkey] = logresults[logkey] + txt + '\n'
-           except urllib2.URLError, e: # In case of Basic Authentication and other errors
+           except urllib2.URLError as e: # In case of Basic Authentication and other errors
                txt = "   |   Alert : %s" % e
                logresults[logkey] = logresults[logkey] + txt + '\n'
            except: # In case of other errors
-               print 'Not able to read url'
+               print('Not able to read url')
            txt = "   |   %s" % (thisurl) 
            logresults[logkey] = logresults[logkey] + txt + '\n'
               
@@ -203,7 +205,7 @@ def func_scanhost(ip, logloc):
 
 # func CheckIPrange
 def func_checkIPrange(ip_range):
-   print 'Checking IP range... ',
+   print('Checking IP range... '),
    reply = False
    posHyphen = ip_range.find('-')
    if int(posHyphen) > 6 and int(posHyphen) <= 15 :
@@ -216,14 +218,14 @@ def func_checkIPrange(ip_range):
                reply = True
          except Exception :
             #nothing
-            print '.',
+            print('.'),
    
-   print "Done"   
+   print("Done")   
    return reply
 
 # func Create IP list of range
 def func_createIPlist(ip_range):
-   print 'Creating IP list...',
+   print('Creating IP list...'),
    posHyphen = ip_range.find('-')
    ip_first = ip_range[:posHyphen]
    ip_untill = ip_range[posHyphen +1:]
@@ -232,12 +234,12 @@ def func_createIPlist(ip_range):
 	
    for x in range(int(ip_first_parts[3]), int(ip_untill)+1):
       ip_list.append(str(ip_first_parts[0]) + '.' + str(ip_first_parts[1]) + '.' + str(ip_first_parts[2]) + '.' + str(x))
-   print 'Done'
+   print('Done')
    return ip_list
 
 #func Thread-chunks of ip list
 def func_createThreadsIPlist(ip_list):
-    print 'Creating Threads of IP list...'
+    print('Creating Threads of IP list...')
     ip_threads = []
     ips = 0
     for jj in ip_list :
@@ -341,7 +343,7 @@ def func_titleFilter(page):
 
 # func Exit
 def func_exit():
-   print "Exiting...\n\nThanks for using\nCleveridge IP Spider\n\nCleveridge : https://cleveridge.org /nIP Spider : https://github.com/Cleveridge/cleveridge-ip-spider"
+   print("Exiting...\n\nThanks for using\nCleveridge IP Spider\n\nCleveridge : https://cleveridge.org /nIP Spider : https://github.com/Cleveridge/cleveridge-ip-spider")
 
 
 
@@ -350,21 +352,21 @@ def func_exit():
 #++ PROGRAM ++#
 os.system('clear')
 
-print "************************************************"
-print "||             CLEVERIDGE IP SPIDER           ||"
-print "************************************************"
-print "||  IMPORTANT:                                ||"
-print "||  This tool is for ethical testing purpose  ||"
-print "||  only.                                     ||"
-print "||  Cleveridge and its owners can't be held   ||"
-print "||  responsible for misuse by users.          ||"
-print "||  Users have to act as permitted by local   ||"
-print "||  law rules.                                ||"
-print "************************************************"
-print "||     Cleveridge - Ethical Hacking Lab       ||"
-print "||               cleveridge.org               ||"
-print "************************************************\n"
-print "Version %s build %s" % (version, build)
+print("************************************************")
+print("||             CLEVERIDGE IP SPIDER           ||")
+print("************************************************")
+print("||  IMPORTANT:                                ||")
+print("||  This tool is for ethical testing purpose  ||")
+print("||  only.                                     ||")
+print("||  Cleveridge and its owners can't be held   ||")
+print("||  responsible for misuse by users.          ||")
+print("||  Users have to act as permitted by local   ||")
+print("||  law rules.                                ||")
+print("************************************************")
+print("||     Cleveridge - Ethical Hacking Lab       ||")
+print("||               cleveridge.org               ||")
+print("************************************************\n")
+print("Version %s build %s" % (version, build))
 
 
 
@@ -385,26 +387,26 @@ logdir = "log"
 if not os.path.exists(logdir):
    os.makedirs(logdir)
    txt = "Directory 'log/' created"
-   print txt
+   print(txt)
 
 """ Every run : create log file """
 #-- Creating log file in directory 'log' --#
 now = datetime.now()
 logfile = str(now.year) + str(format(now.month, '02d')) + str(format(now.day, '02d')) + '_' + str(format(now.hour, '02d')) + str(format(now.minute, '02d')) + str(format(now.second, '02d')) + ".log"
-print "Creating log : log/%s" % (logfile),
+print("Creating log : log/%s" % (logfile)),
 logloc = logdir + "/" + logfile
 with open(logloc, "w") as mylog:
-   os.chmod(logloc, 0660)
+   os.chmod(logloc, 0o660)
    txt = "Log created by Cleveridge IP Spider - " + version + " build " + build + "\n\n"
    mylog.write(txt)
    func_addToFinalLog(txt)
-   print ".... Done"
+   print(".... Done")
 """ """
 
 #-- Creating default configuration in directory 'cnf' --#
 txt = "Checking configuration status"
 func_writelog("a", logloc, txt + "\n")
-print txt
+print(txt)
 
 
 # if no cnf directory -> Create
@@ -413,18 +415,18 @@ if not os.path.exists(cnfdir) :
    os.makedirs(cnfdir)
    txt = "Directory 'cnf/' created"
    func_writelog("a", logloc, txt + "\n")
-   print txt
+   print(txt)
    
 
 # if no user ip file in cnf -> create
 file_userip = cnfdir + "/userip.cnf"
 if not os.path.exists(file_userip) :
    with open(file_userip, "w") as myuserip :
-      os.chmod(file_userip, 0660)
+      os.chmod(file_userip, 0o660)
       myuserip.write("1.1.1.1")
       txt = "File 'userip.cnf' created in 'cnf/'"
       func_writelog("a", logloc, txt + "\n")
-      print txt
+      print(txt)
       
 
 # if default file directory not exist -> create
@@ -433,7 +435,7 @@ if not os.path.exists(datadir) :
    os.makedirs(datadir)
    txt = "Directory 'data/' created"
    func_writelog("a", logloc, txt + "\n")
-   print txt
+   print(txt)
 
 """
 :END
@@ -446,22 +448,24 @@ ON FIRST RUN : SETTING UP BASIC FILES AND FOLDERS
 
 
 
-print " " # to create a better view of the logs on screen
+print(" ") # to create a better view of the logs on screen
 
 
 #-- Register date and time of scan --#
 txt = "Tool started : %s/%s/%s - %s:%s:%s" % (now.year, format(now.month, '02d'), format(now.day, '02d'), format(now.hour, '02d'), format(now.minute, '02d'), format(now.second, '02d'))
 func_writelog("a", logloc, txt + "\n\n")
 func_addToFinalLog(txt)
-print txt
-print " "
+print(txt)
+print(" ")
 
 #-- Verify users IP --#
-print "Fill out your machines IP. This is the IP you want to hide!!"
-print "If the IP is the same as the default, just hit [Enter]..."
+print("Fill out your machines IP. This is the IP you want to hide!!")
+print("If the IP is the same as the default, just hit [Enter]...")
 with open(file_userip, 'r') as cont :
    content = cont.read()
-   my_ip = raw_input("Your IP [" + content + "] : ") or content
+   try: input = raw_input # Fix Python 2 >< 3
+   except NameError: pass 
+   my_ip = input("Your IP [" + content + "] : ") or content
 with open(file_userip, 'w') as myuserip : # save new value
    myuserip.write(my_ip[:15]) # save not more then 15 chars
 	
@@ -470,36 +474,36 @@ with open(file_userip, 'w') as myuserip : # save new value
 txt = "Local IP : " + [(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
 func_writelog("a", logloc, txt + "\n")
 func_addToFinalLog(txt)
-print txt
+print(txt)
 
 #-- Visible IP --#
 try :
    visible_ip = urllib2.urlopen('https://cleveridge.org/_exchange/open_files/return_ip.php?s=ip_spider').read()
 except Exception :
    visible_ip = urllib2.urlopen('https://enabledns.com/ip').read()
-txt = "Visible IP : " + visible_ip
+txt = "Visible IP : " + str(visible_ip)
 func_writelog("a", logloc, txt + "\n")
 func_addToFinalLog(txt)
-print txt
+print(txt)
 
 #-- if private IP is visible
 if visible_ip == my_ip: # if your real ip is visible -> Break up 
    txt = "***********************************************************\n* WARNING !!!                                             *\n*    Are you sure ?                                       *\n*    Your real IP is visible !!!                          *\n*                                                         *\n*    Use a VPN                                            *\n*    or                                                   *\n*    Add 'Socks4 127.0.0.1 9050' to /etc/proxychains.conf *\n*    Start Tor service, then                              *\n*    proxychains ./cl_ssh_scan.py                         *\n***********************************************************"
    func_writelog("a", logloc, txt + "\n")
    func_addToFinalLog(txt)
-   print txt
+   print(txt)
    
 if False == True:
     pass
 else: # CHANGED .... previously : If hidden IP
    
    # Select Method
-   print "\n\n *************************************\n * Select a method :                 *\n *************************************\n * h : Scan one host ip              *\n * r : Scan a range of IP's          *" + "\n *************************************"  #\n * f : Scan IP's from file (one/row) *\n *************************************"
-   method = raw_input(' * Method : ')
+   print("\n\n *************************************\n * Select a method :                 *\n *************************************\n * h : Scan one host ip              *\n * r : Scan a range of IP's          *" + "\n *************************************")  #\n * f : Scan IP's from file (one/row) *\n *************************************"
+   method = input(' * Method : ')
    txt = "Selected Method : "
    func_writelog("a", logloc, txt)
    func_addToFinalLog(txt)
-   print txt,
+   print(txt),
    
    
    if method == 'h':   
@@ -507,9 +511,9 @@ else: # CHANGED .... previously : If hidden IP
       
       txt = "Scan one host IP"
       func_writelog("a", logloc, txt + "\n\n")
-      print txt
+      print(txt)
    	
-      hostname = raw_input('Victim IP : ')
+      hostname = input('Victim IP : ')
       func_scanhost(hostname, logloc)
    
    elif method == 'r': 
@@ -518,23 +522,23 @@ else: # CHANGED .... previously : If hidden IP
       txt = "Scan IP range"
       func_writelog("a", logloc, txt + "\n\n")
       func_addToFinalLog(txt)
-      print txt
+      print(txt)
       
-      print "Fill out an IP range like 192.168.0.1-25"
-      ip_range = raw_input('IP range : ')
+      print("Fill out an IP range like 192.168.0.1-25")
+      ip_range = input('IP range : ')
       
       # If IP range is valid > execute      
       if(func_checkIPrange(ip_range) != True): # if not valid
          txt = "IP range not valid !! e.g. 192.168.0.1-25"
          func_writelog("a", logloc, txt + "\n")
-         print txt
+         print(txt)
       else : # if valid ip range
       	
          # log
          txt = "IP range %s is valid" % (ip_range)
          func_writelog("a", logloc, txt + "\n\n")
          func_addToFinalLog(txt)
-         print txt
+         print(txt)
       	
          # creating ip thread list
          ip_range_length = 0
@@ -555,14 +559,14 @@ else: # CHANGED .... previously : If hidden IP
              t.join()
          time.sleep(5)
          
-         print ' '
-         print 'Results:'
-         print '********'
+         print(' ')
+         print('Results:')
+         print('********')
          #for key, val in enumerate(logresults):   #cacheresult) :
-         for num in range(0, 255):
+         for num in range(0, 256):
              if num in logresults :
                  txt = logresults[num]   #cacheresult[value]
-                 print txt
+                 print(txt)
                  func_addToFinalLog(txt)
          
          # Create Final Log
@@ -573,7 +577,7 @@ else: # CHANGED .... previously : If hidden IP
          duration = time_stamp_end - time_stamp_start
          txt = 'Scan Ended \nDuration ' + time.strftime('%H hours %M min %S sec', time.gmtime(duration)) + '\n\nLog at ' + logloc
          func_writelog("a", logloc, txt + "\n\n")
-         print txt
+         print(txt)
          
          func_exit()
          
@@ -586,13 +590,13 @@ else: # CHANGED .... previously : If hidden IP
        
       txt = "Scan IP's from file"
       func_writelog("a", logloc, txt + "\n\n")
-      print txt
+      print(txt)
       
       d_files = func_getDataFiles()
       txt = func_printDataFileOptions(d_files)
-      print txt[:-1] # to remove the last \n
+      print(txt)[:-1] # to remove the last \n
       
-      ip_file = raw_input(" * Select : ")
+      ip_file = input(" * Select : ")
       
       # Get File contents or Exit
       goon = False
@@ -601,25 +605,25 @@ else: # CHANGED .... previously : If hidden IP
          goon = True
          val  = val -1 # because array keys are options -1
       except Exception :
-         print 'No file selected'
+         print('No file selected')
       
       # if selection is an integer and if selection exists -> execute else exit
       ip_l = []
       if goon == True :
-         print d_files[val]
+         print(d_files[val])
          try :
             fl = open(d_files[val], 'r')
       		
             txt = "Selected File : " + str(d_files[val])
             func_writelog("a", logloc, txt + "\n")
-            print txt
+            print(txt)
       		
             
             for line in fl :
                ip_l.append(line)
-               print ' - ' + line
+               print(' - ' + line)
          except Exception :
-            print 'Selection not valid'
+            print('Selection not valid')
       else :
          func_exit()
       
@@ -631,9 +635,9 @@ else: # CHANGED .... previously : If hidden IP
                socket.inet_aton(hostname)
                func_scanhost(hostname, logloc)
             except socket.error :
-               print "Contains an unvalid IP"
+               print("Contains an unvalid IP")
       else :
-         print "The selected file seems empty"
+         print("The selected file seems empty")
          func_exit()
    
    else :
