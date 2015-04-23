@@ -8,7 +8,7 @@ Cleveridge IP Spider
 >Users have to act as permitted by local law rules.
 
 ##What is the Cleveridge IP Spider
-The Cleveridge IP Spider searches for open TCP ports of a single IP-address or a IP-range and returns the open ports with an indication of the service behind the open ports.    
+The Cleveridge IP Spider searches for open TCP ports of a single IP-address or an IP-range and returns the open ports with an indication of the service behind the open ports.    
 
 When scanning a range of IP's it will run multiple threads at the same time to save time. In one scan procedure you will be able to scan a range of 256 IP's (xxx.xxx.xxx.0-255)
 
