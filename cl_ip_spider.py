@@ -14,13 +14,14 @@
 #############################################################
 #                                                           #
 version = "V1.00"
-build = "001"
+build = "005"
 #############################################################
 
 import getpass
 import glob
 import math
 import os
+import re
 import socket
 import sys
 import threading
@@ -31,6 +32,7 @@ except ImportError:
     import urllib2
 from datetime import datetime
 from random import randint
+from subprocess import Popen, PIPE
 
 
 # Scanning ports
@@ -114,6 +116,7 @@ sPortsTCP = {
     54320 : 'BO2K RAT',
     65301 : 'pcAnywhere'
 }
+    
 #++ BASIC SETTINGS //#
 threads = 5
 finallog = "\n"
@@ -147,6 +150,20 @@ def func_scanhost(ip, logloc):
    # create log result for this IP
    if not ip in logresults :
        logresults[logkey] = txt + '\n'
+       
+       # try to ping to see machine is active
+       try :
+           png = Popen(["ping", "-c2", ip], stdout = PIPE)
+           pngreturn = png.communicate()[0]
+           if "0 received" in pngreturn :
+               txt = "   | PING : ip not responding"
+           else : txt = "   | PING : ACTIVE MACHINE -> RESPONDING"
+       except Exception as e:
+           txt = "   | PING : error %e" % (e)
+       logresults[logkey] = logresults[logkey] + txt + '\n'
+       print(txt)
+           
+       
    
    # Walk Through Ports
    for item in sorted(sPortsTCP):
