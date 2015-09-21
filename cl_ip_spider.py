@@ -13,8 +13,9 @@
 #  - none yet                                               #
 #############################################################
 #                                                           #
-version = "V1.00"
-build = "005"
+version = "V1.00"                                           #
+build = "006"                                               #
+# Discovery edition                                         #
 #############################################################
 
 import getpass
@@ -72,6 +73,7 @@ sPortsTCP = {
     901 : 'SAMBA Web Admin / VMware',
     991 : 'NAS - Network Admin System',
     1010 : 'Trojan Dolly / ThinLink',
+    1080 : 'SOCKS proxy',
     1194 : 'OpenVPN',
     1433 : 'MS SQL',
     1494 : 'Citrix ICA',
@@ -89,7 +91,11 @@ sPortsTCP = {
     5450 : 'OSIsoft PI Server Client Access',
     5631 : 'pcAnywhere',
     5632 : 'pcAnywhere',
-    6666 : 'Beast RAT',
+    6665 : 'IRC',
+    6666 : 'IRC / Beast RAT',
+    6667 : 'IRC',
+    6668 : 'IRC',
+    6669 : 'IRC',
     7071 : 'Zimbra Admin Console',
     7474 : 'Neo4J Server webadmin',
     7777 : 'Kloxo control Panel SSL',
@@ -100,6 +106,7 @@ sPortsTCP = {
     8291 : 'Winbox : MicroTik Router OS for Windows',
     8443 : 'Plesk Admin Panel SSL',
     8880 : 'Plesk Admin Panel',
+    8081 : 'Raspberry Pi Motion (camera)',
     9001 : 'Cisco-xremote Router Config',
     10000 : 'Webmin Admin',
     12345 : 'NetBus: Remote Administration tool (often Trojan)',
