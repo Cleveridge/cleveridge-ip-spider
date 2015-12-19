@@ -507,7 +507,6 @@ ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 try :
    visible_ip = urllib2.urlopen('https://cleveridge.org/_exchange/open_files/return_ip.php?s=ip_spider', context=ctx).read()
-   print('********* %s' % (visible_ip))
 except Exception :
    visible_ip = urllib2.urlopen('https://enabledns.com/ip', context=ctx).read()
 txt = "Visible IP : " + str(visible_ip)
