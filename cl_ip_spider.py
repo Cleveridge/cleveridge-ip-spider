@@ -14,7 +14,7 @@
 #############################################################
 #                                                           #
 version = "V1.00"                                           #
-build = "006"                                               #
+build = "007"                                               #
 # Discovery edition                                         #
 #############################################################
 
@@ -24,6 +24,7 @@ import math
 import os
 import re
 import socket
+import ssl
 import sys
 import threading
 import time
@@ -501,10 +502,14 @@ func_addToFinalLog(txt)
 print(txt)
 
 #-- Visible IP --#
+ctx = ssl.create_default_context()
+ctx.check_hostname = False
+ctx.verify_mode = ssl.CERT_NONE
 try :
-   visible_ip = urllib2.urlopen('https://cleveridge.org/_exchange/open_files/return_ip.php?s=ip_spider').read()
+   visible_ip = urllib2.urlopen('https://cleveridge.org/_exchange/open_files/return_ip.php?s=ip_spider', context=ctx).read()
+   print('********* %s' % (visible_ip))
 except Exception :
-   visible_ip = urllib2.urlopen('https://enabledns.com/ip').read()
+   visible_ip = urllib2.urlopen('https://enabledns.com/ip', context=ctx).read()
 txt = "Visible IP : " + str(visible_ip)
 func_writelog("a", logloc, txt + "\n")
 func_addToFinalLog(txt)
